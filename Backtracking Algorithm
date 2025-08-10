@@ -1,0 +1,23 @@
+def is_safe(board, row, col, n):
+    for i in range(row):
+        if board[i] == col or abs(board[i] - col) == abs(i - row):
+            return False
+    return True
+
+
+def solve_backtracking_util(board, row, n, solutions):
+    if row == n:
+        solutions.append(board.copy())
+        return
+    for col in range(n):
+        if is_safe(board, row, col, n):
+            board[row] = col
+            solve_backtracking_util(board, row + 1, n, solutions)
+            board[row] = -1
+
+
+def solve_backtracking(n):
+    board = [-1] * n
+    solutions = []
+    solve_backtracking_util(board, 0, n, solutions)
+    return solutions
