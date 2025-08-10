@@ -1,0 +1,67 @@
+import random
+import matplotlib.pyplot as plt
+
+def fitness(state, n):
+    conflicts = 0
+    for i in range(n):
+        for j in range(i + 1, n):
+            if state[i] == state[j] or abs(state[i] - state[j]) == abs(i - j):
+                conflicts += 1
+    return -conflicts
+
+
+def select(population, scores):
+    total = sum(scores)
+    probs = [s / total for s in scores]
+    return population[random.choices(range(len(population)), probs)[0]]
+
+
+def crossover(parent1, parent2, n):
+    point = random.randint(1, n - 2)
+    return parent1[:point] + parent2[point:]
+
+
+def mutate(state, n):
+    row = random.randint(0, n - 1)
+    col = random.randint(0, n - 1)
+    state[row] = col
+    return state
+
+
+def plot_fitness(best_fitness_per_generation):
+    plt.plot(range(len(best_fitness_per_generation)), best_fitness_per_generation)
+    plt.title("Genetic Algorithm - Best Fitness Over Generations")
+    plt.xlabel("Generation")
+    plt.ylabel("Best Fitness (negative of conflicts)")
+    plt.grid(True)
+    plt.show()
+
+
+def solve_genetic(n, population_size=100, generations=1000, mutation_rate=0.1):
+    population = [[random.randint(0, n - 1) for _ in range(n)] for _ in range(population_size)]
+    best_fitness_per_generation = []
+
+    for _ in range(generations):
+        scores = [fitness(ind, n) for ind in population]
+        best_fitness_per_generation.append(max(scores))
+
+        if max(scores) == 0:
+            solution = population[scores.index(0)]
+            plot_fitness(best_fitness_per_generation)
+            return solution
+
+        new_population = []
+        adjusted_scores = [s - min(scores) + 1 for s in scores]
+
+        for _ in range(population_size):
+            p1 = select(population, adjusted_scores)
+            p2 = select(population, adjusted_scores)
+            child = crossover(p1, p2, n)
+            if random.random() < mutation_rate:
+                child = mutate(child, n)
+            new_population.append(child)
+
+        population = new_population
+
+    plot_fitness(best_fitness_per_generation)
+    return None
