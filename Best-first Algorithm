@@ -1,0 +1,55 @@
+import heapq
+def heuristic(state, n):
+    row_counts = [0] * n
+    diag1_counts = [0] * (2 * n - 1)
+    diag2_counts = [0] * (2 * n - 1)
+
+    for i in range(n):
+        row = state[i]
+        row_counts[row] += 1
+        diag1_counts[i + row] += 1
+        diag2_counts[i - row + n - 1] += 1
+
+    def count_conflicts(counts):
+        return sum(c * (c - 1) // 2 for c in counts if c > 1)
+
+    return (
+        count_conflicts(row_counts)
+        + count_conflicts(diag1_counts)
+        + count_conflicts(diag2_counts)
+    )
+
+
+def get_neighbors(state, n):
+    neighbors = []
+    for row in range(n):
+        for col in range(n):
+            if state[row] != col:
+                new_state = state.copy()
+                new_state[row] = col
+                neighbors.append(new_state)
+    return neighbors
+
+
+def solve_best_first(n):
+    start = [0] * n
+    visited = set()
+    heap = []
+    heapq.heappush(heap, (heuristic(start, n), start))
+
+    while heap:
+        cost, current = heapq.heappop(heap)
+        state_key = tuple(current)
+
+        if state_key in visited:
+            continue
+        visited.add(state_key)
+
+        if heuristic(current, n) == 0:
+            return current
+
+        neighbors = get_neighbors(current, n)
+        for neighbor in neighbors:
+            heapq.heappush(heap, (heuristic(neighbor, n), neighbor))
+
+    return None
