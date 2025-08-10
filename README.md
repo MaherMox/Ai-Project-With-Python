@@ -36,23 +36,3 @@ The program allows you to:
 
 ---
 
-## 📂 Project Structure
-n-queens-ai-solver/
-│── backtracking.py # Backtracking algorithm
-│── best_first.py # Best-First Search algorithm
-│── hill_climbing.py # Hill Climbing algorithm
-│── genetic.py # Genetic Algorithm + plotting
-│── main.py # Tkinter GUI entry point
-│── README.md # Project documentation
-
-yaml
-Copy
-Edit
-
----
-
-## 🔧 Installation & Usage
-1. **Clone the repository**
-```bash
-git clone https://github.com/your-username/n-queens-ai-solver.git
-cd n-queens-ai-solver
