@@ -1,0 +1,36 @@
+import random
+def heuristic(state, n):
+    conflicts = 0
+    for i in range(n):
+        for j in range(i + 1, n):
+            if state[i] == state[j] or abs(state[i] - state[j]) == abs(i - j):
+                conflicts += 1
+    return conflicts
+
+
+def get_best_neighbor(state, n):
+    min_conflicts = heuristic(state, n)
+    best_state = state
+    for row in range(n):
+        for col in range(n):
+            if state[row] != col:
+                new_state = state.copy()
+                new_state[row] = col
+                h = heuristic(new_state, n)
+                if h < min_conflicts:
+                    min_conflicts = h
+                    best_state = new_state
+    return best_state
+
+
+def solve_hill_climbing(n, max_steps=1000):
+    current = [random.randint(0, n - 1) for _ in range(n)]
+    for _ in range(max_steps):
+        h = heuristic(current, n)
+        if h == 0:
+            return current
+        next_state = get_best_neighbor(current, n)
+        if next_state == current:
+            break
+        current = next_state
+    return None
